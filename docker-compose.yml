@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  runner:
+    build:
+      context: runner
+
+    ports:
+      - 127.0.0.1:5000:5000
+
+    volumes:
+      - ./logs:/runner/logs
+      - type: "bind"
+        source: "./runner/makefile"
+        target: "/runner/makefile"
+      - type: "bind"
+        source: "./runner/appsettings.json"
+        target: "/app/appsettings.Production.json"
+
+    entrypoint: []
+    command: sleep infinity
+    stop_grace_period: 0.1s
+
+  bot:
+    build:
+      context: bot
+      dockerfile: Dockerfile
+
+    volumes:
+      - ./bot:/app
+
+    entrypoint: []
+    command: sleep infinity
+    stop_grace_period: 0.1s
+
+    environment:
+      RUNNER_IPV4: 'runner'
